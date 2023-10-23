@@ -1,4 +1,4 @@
-FROM php:8.1-fpm
+FROM php:8.2-fpm
 
 RUN apt update \
     && apt install -y zlib1g-dev g++ git libicu-dev zip libzip-dev zip libxslt-dev \
@@ -12,7 +12,10 @@ RUN apt update \
     && docker-php-ext-install bcmath \
     && docker-php-ext-install xsl \
     && docker-php-ext-enable sodium \
-    && docker-php-ext-install soap
+    && docker-php-ext-install soap \
+    && apt install -y librabbitmq-dev \
+    && pecl install amqp \
+    && docker-php-ext-enable amqp
     
 ARG WITH_XDEBUG=true
 ARG XDEBUG_VERSION=3.1.3
