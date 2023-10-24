@@ -7,7 +7,7 @@ use App\Dto\PackageCreateInput;
 use App\Entity\Package;
 use App\Entity\Parcel;
 use App\Entity\Receiver;
-use App\Message\PackageCreate as PackageCreateMessage;
+use App\Message\PackageCreateMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,10 +52,12 @@ class PackageCreateAction extends AbstractController
         $package = new Package();
         $package->setReceiver($receiver);
         $package->addParcel($parcel);
-        $package->setStatus(1);
+        $package->setStatus(Package::STATUS_CREATED);
 
         $this->entityManager->persist($package);
         $this->entityManager->flush();
+
+        $requestInput->id = $package->getId();
 
         $this->messageBus->dispatch(
             message: new PackageCreateMessage($requestInput)

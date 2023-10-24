@@ -11,7 +11,8 @@ framework:
 
         routing:
             # Route your messages to the transports
-            'App\Message\PackageCreate': async
+            'App\Message\PackageCreateMessage': async
+            'App\Message\PackageSendMessage': async
 
 # when@test:
 #    framework:

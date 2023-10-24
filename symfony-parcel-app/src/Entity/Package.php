@@ -26,6 +26,10 @@ use Doctrine\ORM\Mapping as ORM;
 )]
 class Package
 {
+    const STATUS_CREATED = 1;
+    const STATUS_SENT = 2;
+    const STATUS_DELIVERED = 3;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -39,7 +43,7 @@ class Package
     private ?Receiver $receiver = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $packageId = null;
+    private ?string $transactionId = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $sessionId = null;
@@ -81,14 +85,14 @@ class Package
         return $this;
     }
 
-    public function getPackageId(): ?string
+    public function getTransactionId(): ?string
     {
-        return $this->packageId;
+        return $this->transactionId;
     }
 
-    public function setPackageId(?string $packageId): static
+    public function setTransactionId(?string $transactionId): static
     {
-        $this->packageId = $packageId;
+        $this->transactionId = $transactionId;
 
         return $this;
     }

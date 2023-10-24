@@ -8,6 +8,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class PackageCreateInput
 {
+    public ?int $id = null;
+
+    public ?ReceiverCreateInput $sender = null;
+
     #[Assert\NotBlank]
     #[Assert\Valid]
     public ?ReceiverCreateInput $receiver = null;
