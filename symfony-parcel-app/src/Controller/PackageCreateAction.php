@@ -41,6 +41,7 @@ class PackageCreateAction extends AbstractController
         $receiver->setPostCode($requestInput->receiver->postCode);
         $receiver->setPhoneNumber($requestInput->receiver->phoneNumber);
         $receiver->setEmailAddress($requestInput->receiver->emailAddress);
+        $receiver->setCountry($requestInput->receiver->country);
 
         $parcel = new Parcel();
         $parcel->setWeight($requestInput->parcel->weight);

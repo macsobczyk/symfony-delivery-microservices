@@ -7,7 +7,9 @@ use App\Repository\AddressRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AddressRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: []
+)]
 class Receiver
 {
     #[ORM\Id]
@@ -35,6 +37,9 @@ class Receiver
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $emailAddress = null;
+
+    #[ORM\Column(length: 2)]
+    private ?string $country = null;
 
     public function getId(): ?int
     {
@@ -121,6 +126,18 @@ class Receiver
     public function setEmailAddress(?string $emailAddress): static
     {
         $this->emailAddress = $emailAddress;
+
+        return $this;
+    }
+
+    public function getCountry(): ?string
+    {
+        return $this->country;
+    }
+
+    public function setCountry(string $country): static
+    {
+        $this->country = $country;
 
         return $this;
     }

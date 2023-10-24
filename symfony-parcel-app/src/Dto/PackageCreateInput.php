@@ -2,7 +2,6 @@
 
 namespace App\Dto;
 
-use ApiPlatform\Metadata\ApiProperty;
 use App\Dto\ParcelCreateInput;
 use App\Dto\ReceiverCreateInput;
 use Symfony\Component\Validator\Constraints as Assert;
