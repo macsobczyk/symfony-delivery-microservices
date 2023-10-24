@@ -1,20 +1,26 @@
 <?php
 
-namespace App\CourierApi\Fedex\Adapter\ShipAPI;
+namespace App\FedexClient\DataTransformer;
 
 use App\Dto\PackageCreateInput;
 use App\Dto\ParcelCreateInput;
 use App\Dto\ReceiverCreateInput;
 use DateTime;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class PackageDataTransformer {
 
+
+    public function __construct(
+
+        #[Autowire('%fedex_account_number%')]
+        private readonly string $accountNumber
+    ) {}
 
     /**
      * Creates API request payload for intra-community shippings
      *
      * @param PackageCreateInput $package
-     * @param CreateShipmentV1Input $input
      *
      * @return array
      */
@@ -28,10 +34,10 @@ class PackageDataTransformer {
             "mergeLabelDocOption" =>  "LABELS_AND_DOCS",
             "requestedShipment" =>  [
                 "shipDatestamp" =>  $shipDate,
-                "totalDeclaredValue" =>  "PLN",
+                "totalDeclaredValue" => $this->getMoneyValue(50, "PLN"),
                 "shipper" =>  [
-                    "address" =>  $this->createAddress($package->receiver),
-                    "contact" => $this->createContact($package->getSenderAddress())
+                    "address" =>  $this->createAddress($package->sender),
+                    "contact" => $this->createContact($package->sender)
                 ],
                 "recipients" =>  [
                     [
@@ -44,17 +50,17 @@ class PackageDataTransformer {
                 "packagingType" => "YOUR_PACKAGING",
                 "totalWeight" =>  $package->parcel->weight,
                 "origin" =>  [
-                    "address" =>  $this->createAddress($package->getSenderAddress()),
-                    "contact" =>  $this->createContact($package->getSenderAddress())
+                    "address" =>  $this->createAddress($package->sender),
+                    "contact" =>  $this->createContact($package->sender)
                 ],
                 "shippingChargesPayment" =>  [
                     "paymentType" =>  "SENDER",
                     "payor" =>  [
                         "responsibleParty" =>  [
-                            "address" =>  $this->createAddress($package->getSenderAddress()),
-                            "contact" =>  $this->createContact($package->getSenderAddress()),
+                            "address" =>  $this->createAddress($package->sender),
+                            "contact" =>  $this->createContact($package->sender),
                             "accountNumber" =>  [
-                                "value" =>  $input->accountNumber
+                                "value" =>  $this->accountNumber
                             ]
                         ]
                     ]
@@ -63,14 +69,14 @@ class PackageDataTransformer {
                     "dutiesPayment" =>  [
                         "payor" =>  [
                             "responsibleParty" =>  [
-                                "address" =>  $this->createAddress($package->getSenderAddress()),
-                                "contact" =>  $this->createContact($package->getSenderAddress()),
+                                "address" =>  $this->createAddress($package->sender),
+                                "contact" =>  $this->createContact($package->sender),
                                 "accountNumber" =>  [
-                                    "value" =>  $input->accountNumber
+                                    "value" =>  $this->accountNumber
                                 ],
                                 "tins" =>  [
                                     [
-                                        "number" =>  $input->vatin,
+                                        "number" =>  "PL9471986123",
                                         "tinType" =>  "FEDERAL",
                                         "usage" =>  "usage",
                                         "effectiveDate" =>  "2000-01-23T04:56:07.000+00:00",
@@ -83,7 +89,7 @@ class PackageDataTransformer {
                     ],
                     "commodities" =>  [
                         [
-                            "unitPrice" =>  $this->getMoneyValue(0, "PLN"),
+                            "unitPrice" =>  $this->getMoneyValue(50, "PLN"),
                             "additionalMeasures" =>  [
                                 [
                                     "quantity" =>  $package->parcel->weight,
@@ -104,9 +110,9 @@ class PackageDataTransformer {
                         ]
                     ],
                     "accountNumber" =>  [
-                        "value" =>  $input->accountNumber
+                        "value" =>  $this->accountNumber
                     ],
-                    "totalCustomsValue" =>  $this->getMoneyValue(0, "PLN")
+                    "totalCustomsValue" =>  $this->getMoneyValue(50, "PLN")
                 ],
                 "labelSpecification" =>  [
                     "labelFormatType" =>  "COMMON2D",
@@ -162,11 +168,11 @@ class PackageDataTransformer {
                 ],
                 "preferredCurrency" =>  "PLN",
                 "totalPackageCount" =>  1,
-                "requestedPackageLineItems" =>  $this->createParcels($package, $input)
+                "requestedPackageLineItems" =>  $this->createParcels($package->parcel)
             ],
             "labelResponseOptions" =>  "LABEL",
             "accountNumber" =>  [
-                "value" =>  $input->accountNumber
+                "value" =>  $this->accountNumber
             ]
         ];
 
@@ -197,23 +203,12 @@ class PackageDataTransformer {
      * @var Address $address
      * @return array
      */
-    protected function createContact(Address $address) : array
+    protected function createContact(ReceiverCreateInput $address) : array
     {
         return [
-            "phoneNumber" =>  $address->getPhoneNumber() ?? "0",
-            "companyName" =>  $address->getCompanyName()
+            "phoneNumber" =>  $address->phoneNumber,
+            "companyName" =>  $address->companyName
         ];
-    }
-
-    /**
-     * Returns total weight of the shipping in kg
-     *
-     * @param Shipping $shipping
-     * @return float
-     */
-    protected function getTotalWeight(Shipping $shipping) : float
-    {
-        return intval($shipping->getParameterByName(ShippingParameters::SHIPPING_WEIGHT_TOTAL)) / 1000;
     }
 
     /**
@@ -223,7 +218,7 @@ class PackageDataTransformer {
      * @param string $currency|Currencies::DEFAULT_CURRENCY
      * @return array
      */
-    protected function getMoneyValue(float $amount, $currency = Currencies::DEFAULT_CURRENCY) : array
+    protected function getMoneyValue(float $amount, $currency) : array
     {
         return [
             "amount" =>  $amount,
@@ -233,49 +228,32 @@ class PackageDataTransformer {
 
     /**
      * Creates parcels payload from shipping entity
+     *
+     * @param ParcelCreateInput $parcel
+     * @return array
      */
-    protected function createParcels(Shipping $shipping, CreateShipmentV1Input $input) : array
+    protected function createParcels(ParcelCreateInput $parcel) : array
     {
-        $output = [];
-        foreach ($shipping->getParcels() as $parcel) {
-            $parcel = [
-                "customerReferences" =>  [],
-                "weight" =>  [
-                    "units" =>  FedexUnit::FEDEX_WEIGHT_UNIT_KG,
-                    "value" =>  $parcel->getWeight() / 1000
-                ],
-                "dimensions" =>  [
-                    "length" =>  $parcel->getLength() / 10,
-                    "width" =>  $parcel->getWidth() / 10,
-                    "height" =>  $parcel->getHeight() / 10,
-                    "units" =>  FedexUnit::FEDEX_LENGTH_UNIT_CM
-                ],
-                "itemDescription" =>  $parcel->getParameterByName(ShippingParameters::SHIPPING_PARCEL_CONTENTS)
-            ];
+        $parcel = [
+            "customerReferences" =>  [
+                [
+                    "customerReferenceType" => "CUSTOMER_REFERENCE",
+                    "value" => "1"
+                ]
+            ],
+            "weight" =>  [
+                "units" =>  "KG",
+                "value" =>  $parcel->weight
+            ],
+            "dimensions" =>  [
+                "length" =>  $parcel->length,
+                "width" =>  $parcel->width,
+                "height" =>  $parcel->height,
+                "units" =>  "CM"
+            ],
+            "itemDescription" =>  "Parcel description",
+        ];
 
-            $references = [];
-            $references[] = $input->referenceNumber1 ?? $shipping->getParameterByName(ShippingParameters::SHIPPING_REFERENCE_NUMBER1);
-            $references[] = $input->referenceNumber2 ?? $shipping->getParameterByName(ShippingParameters::SHIPPING_REFERENCE_NUMBER2);
-
-            $references = \array_filter($references);
-
-            if (isset($references[0]) && !empty($references[0])) {
-                $parcel['customerReferences'][] = [
-                    'customerReferenceType' => 'CUSTOMER_REFERENCE',
-                    'value' => $references[0]
-                ];
-            }
-
-            if (isset($references[1]) && !empty($references[1])) {
-                $parcel['customerReferences'][] = [
-                    'customerReferenceType' => 'CUSTOMER_REFERENCE',
-                    'value' => $references[1]
-                ];
-            }
-
-            $output[] = $parcel;
-        }
-
-        return $output;
+        return [$parcel];
     }
 }
