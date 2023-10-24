@@ -1,4 +1,4 @@
-# symfony-dpd-microservices
+# symfony-delivery-microservices
 A simple implementation of the microservices pattern using the Symfony framework. The aim of this repository was to create an application that enables users to create parcel delivery requests, send them to a courier company, track the parcels, and eventually update their customers with the current delivery status.
 
 This goal has been achieved through three independent applications described below:
