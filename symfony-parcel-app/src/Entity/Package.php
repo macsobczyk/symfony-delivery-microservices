@@ -7,7 +7,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use App\Controller\PackageCreateAction;
-use App\Dto\PackageCreateInput;
+use Sentica\SymfonyDeliveryMicroservicesShared\Dto\PackageCreateInput;
 use App\Repository\PackageRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

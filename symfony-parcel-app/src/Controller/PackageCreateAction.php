@@ -3,12 +3,12 @@
 namespace App\Controller;
 
 use ApiPlatform\Validator\ValidatorInterface;
-use App\Dto\PackageCreateInput;
 use App\Entity\Package;
 use App\Entity\Parcel;
 use App\Entity\Receiver;
-use App\Message\PackageCreateMessage;
 use Doctrine\ORM\EntityManagerInterface;
+use Sentica\SymfonyDeliveryMicroservicesShared\Dto\PackageCreateInput;
+use Sentica\SymfonyDeliveryMicroservicesShared\Message\PackageCreateMessage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;

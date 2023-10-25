@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Entity\Package;
-use App\Message\PackageSendMessage;
+use Sentica\SymfonyDeliveryMicroservicesShared\Message\PackageSendMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;

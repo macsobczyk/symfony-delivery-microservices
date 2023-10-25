@@ -30,7 +30,8 @@
         "symfony/serializer": "6.3.*",
         "symfony/twig-bundle": "6.3.*",
         "symfony/validator": "6.3.*",
-        "symfony/yaml": "6.3.*"
+        "symfony/yaml": "6.3.*",
+        "sentica/symfony-delivery-microservices-shared": "^1.0.0"
     },
     "config": {
         "allow-plugins": {
@@ -82,5 +83,11 @@
     },
     "require-dev": {
         "symfony/maker-bundle": "^1.51"
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/macsobczyk/symfony-delivery-microservices-shared"
+        }
+    ]
 }
