@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\FedexClient\DataTransformer;
 
-use App\Dto\PackageUpdateInput;
+use Sentica\SymfonyDeliveryMicroservicesShared\Dto\PackageUpdateInput;
 
 final class FedexShipmentResponseDataTransformer
 {

@@ -2,9 +2,9 @@
 
 namespace App\FedexClient\DataTransformer;
 
-use App\Dto\PackageCreateInput;
-use App\Dto\ParcelCreateInput;
-use App\Dto\ReceiverCreateInput;
+use Sentica\SymfonyDeliveryMicroservicesShared\Dto\PackageCreateInput;
+use Sentica\SymfonyDeliveryMicroservicesShared\Dto\ParcelCreateInput;
+use Sentica\SymfonyDeliveryMicroservicesShared\Dto\ReceiverCreateInput;
 use DateTime;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 

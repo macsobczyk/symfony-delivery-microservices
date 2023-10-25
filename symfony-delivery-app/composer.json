@@ -15,7 +15,8 @@
         "symfony/http-client": "6.3.*",
         "symfony/runtime": "6.3.*",
         "symfony/validator": "6.3.*",
-        "symfony/yaml": "6.3.*"
+        "symfony/yaml": "6.3.*",
+        "sentica/symfony-delivery-microservices-shared": "^1.0.0"
     },
     "config": {
         "allow-plugins": {
@@ -64,5 +65,11 @@
             "allow-contrib": false,
             "require": "6.3.*"
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/macsobczyk/symfony-delivery-microservices-shared"
+        }
+    ]
 }

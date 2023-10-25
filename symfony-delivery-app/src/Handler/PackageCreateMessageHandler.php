@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use App\Dto\ReceiverCreateInput;
+
 use App\FedexClient\DataTransformer\PackageDataTransformer;
 use App\FedexClient\DataTransformer\FedexShipmentResponseDataTransformer;
 use App\FedexClient\Service as FedexServices;
-use App\Message\PackageCreateMessage;
-use App\Message\PackageSendMessage;
+use Sentica\SymfonyDeliveryMicroservicesShared\Dto\ReceiverCreateInput;
+use Sentica\SymfonyDeliveryMicroservicesShared\Message\PackageCreateMessage;
+use Sentica\SymfonyDeliveryMicroservicesShared\Message\PackageSendMessage;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 

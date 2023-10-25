@@ -11,8 +11,8 @@ framework:
 
         routing:
             # Route your messages to the transports
-            'App\Message\PackageCreateMessage': async
-            'App\Message\PackageSendMessage': async
+            'Sentica\SymfonyDeliveryMicroservicesShared\Message\PackageCreateMessage': async
+            'Sentica\SymfonyDeliveryMicroservicesShared\Message\PackageSendMessage': async
 
 # when@test:
 #    framework:
